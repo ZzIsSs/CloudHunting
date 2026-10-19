@@ -29,7 +29,7 @@ export default function ScheduleLayout() {
           vehicle_type: "xe máy",
           selected_location: locName || location.state?.selected_location || undefined
       };
-      const recommendRes = await fetch('http://127.0.0.1:8000/api/s6/recommend', {
+      const recommendRes = await fetch('/api/s6/recommend', {
         method: 'POST',
         headers,
         body: JSON.stringify(payload)
@@ -53,7 +53,7 @@ export default function ScheduleLayout() {
           'Content-Type': 'application/json',
           ...(token ? { 'Authorization': `Bearer ${token}` } : {})
         };
-        const notifRes = await fetch('http://127.0.0.1:8000/api/s6/notifications', { headers });
+        const notifRes = await fetch('/api/s6/notifications', { headers });
         if (notifRes.ok) {
           const notifData = await notifRes.json();
           setNotifications(notifData);
