@@ -205,3 +205,6 @@ data/*
 *.db-journal
 *.db-wal
 *.db-shm
+
+# Ban clone long nhau trong thu muc goc (tung bi commit nham thanh gitlink)
+/CloudHuntting/
