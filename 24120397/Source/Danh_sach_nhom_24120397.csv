@@ -1,8 +1,0 @@
-﻿STT,Họ và tên,MSSV,Vai trò,Phân công nhiệm vụ cụ thể trong dự án,Tiến độ hoàn thành
-1,Trương Bảo Nguyên,24120397,Nhóm trưởng / Frontend Developer,"Quản lý tiến độ dự án. Trực tiếp phát triển toàn bộ giao diện Frontend (ReactJS), tích hợp 6 API Microservices. Xây dựng phân hệ Quản trị (Admin Dashboard). Phụ trách tổng hợp tài liệu thiết kế và quay video Demo.",100%
-2,Nguyễn Minh Hiếu Nhân,24120399,Thư ký / Backend Developer,Ghi biên bản họp nhóm. Chịu trách nhiệm thiết kế và code Service 4 (Content): Xây dựng hệ thống Đánh giá địa điểm (Reviews) và Xử lý Báo cáo/Hỗ trợ người dùng (Tickets).,100%
-3,Đỗ Đức Thịnh,24120455,AI & Backend Developer,Thiết kế Service 1 (AI Metrics): Nghiên cứu và huấn luyện mô hình Machine Learning (Random Forest) dự báo xác suất mây. Tích hợp dữ liệu vệ tinh Open-Meteo.,100%
-4,Lê Nguyễn Anh Khoa,24120345,Backend Developer,"Thiết kế Service 2 (Booking & Places): Quản lý CSDL địa điểm săn mây, tiện ích xung quanh. Lập trình thuật toán Haversine tính toán khoảng cách địa lý.",100%
-5,Nguyễn Lê Đức Nhật,24120403,Security & Backend Developer,"Thiết kế Service 3 (Auth): Đảm bảo an ninh hệ thống. Xây dựng cơ chế Xác thực (Login/Register), mã hóa mật khẩu và cấp phát JWT Token. Thiết lập Phân quyền (Role-based).",100%
-6,Đỗ Hoàng Long,24120371,Database & Backend Developer,Thiết kế Service 5 (Statistics): Xây dựng cơ chế lưu trữ tập trung siêu tốc. Tối ưu hóa Database SQLite với thuật toán Batch UPSERT và cơ chế dọn rác (Garbage Collection).,100%
-7,Nguyễn Bảo Trọng,24120476,Backend Developer,Thiết kế Service 6 (Recommend): Xây dựng thuật toán AI tự động gợi ý lịch trình (Timeline) theo sở thích người dùng. Xử lý kịch bản dự phòng (Plan B) khi thời tiết xấu.,100%
