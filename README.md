@@ -49,6 +49,7 @@ CloudHunting/
 ├── notebooks/                 # Jupyter Notebook (huấn luyện mô hình AI, EDA)
 ├── pic/                       # Ảnh các điểm săn mây
 ├── start_all.py               # Khởi động toàn bộ hệ thống trên Windows
+├── serve_all.py               # Chạy toàn bộ hệ thống trong 1 tiến trình (Render dùng)
 ├── render.yaml, render_start.sh  # Cấu hình deploy Render
 ├── test_integration.py        # Kiểm thử tích hợp theo kịch bản demo
 └── requirements.txt           # Danh sách thư viện Python
@@ -148,4 +149,6 @@ Frontend gọi API bằng đường dẫn tương đối (`/api/...`, `/auth/...
 
 # ☁️ Deploy (Render)
 
-Render đọc `render.yaml`: cài thư viện bằng `pip install -r requirements.txt`, rồi chạy `render_start.sh` để khởi động 6 service nội bộ và Gateway trên cổng `$PORT`. Render dùng `/health` làm health check.
+Render đọc `render.yaml`: chạy `render_build.sh` (cài thư viện Python, build frontend), rồi chạy `render_start.sh`. Script này gọi `serve_all.py` để chạy cả 6 service và Gateway trong **một tiến trình** (mỗi service một thread, Gateway nghe cổng `$PORT`). Lý do: 7 tiến trình uvicorn riêng lẻ cần khoảng 700 MB RAM, vượt giới hạn 512 MB của gói free, còn một tiến trình chỉ cần khoảng 220 MB. Render dùng `/health` làm health check.
+
+Có thể chạy thử cách này ở máy bằng `python serve_all.py`.

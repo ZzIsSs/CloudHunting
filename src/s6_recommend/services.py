@@ -415,8 +415,8 @@ def scan_and_notify_opportunities(db: Session):
     cutoff_time = (now - timedelta(hours=12)).strftime("%Y-%m-%d %H:%M:%S")
     
     for loc in LOCATIONS:
-        prob = fetch_s1_prediction(loc["name"], loc["lat"], loc["lon"])
-        
+        prob = fetch_s1_prediction(loc["name"], loc["lat"], loc["lon"]).get("probability", 0.0)
+
         if prob >= 85.0:
             # Kiểm tra xem trong 12 tiếng qua đã báo chỗ này chưa
             recent_log = db.query(NotificationLog).filter(
@@ -450,7 +450,7 @@ def switch_to_plan_b(req: PlanBRequest) -> ItineraryResponse:
     
     # 1. Kiểm tra lại điểm đến hiện tại
     if target_loc:
-        current_prob = fetch_s1_prediction(target_loc["name"], target_loc["lat"], target_loc["lon"])
+        current_prob = fetch_s1_prediction(target_loc["name"], target_loc["lat"], target_loc["lon"]).get("probability", 0.0)
         if current_prob >= 60.0:
             # Thời tiết vẫn ổn, khuyên đi tiếp
             loc_data = LocationData(
@@ -475,7 +475,7 @@ def switch_to_plan_b(req: PlanBRequest) -> ItineraryResponse:
         if req.vehicle_type.lower() == "ô tô" and not loc["car_accessible"]:
             continue
             
-        prob = fetch_s1_prediction(loc["name"], loc["lat"], loc["lon"])
+        prob = fetch_s1_prediction(loc["name"], loc["lat"], loc["lon"]).get("probability", 0.0)
         trend = fetch_s5_trend(loc["name"])
         score = prob
         if trend == "Tăng": score += 10
