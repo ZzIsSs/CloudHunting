@@ -1,6 +1,8 @@
 """
 Gateway Routes: Đăng ký tất cả proxy routes và endpoint health check.
 """
+import asyncio
+
 from fastapi import APIRouter, Request
 from .config import SERVICES
 from .proxy import proxy_request, check_service_health
@@ -65,14 +67,13 @@ async def health_check():
     Kiểm tra sức khỏe toàn bộ hệ thống.
     Trả về trạng thái (online/offline) và thời gian phản hồi của từng service.
     """
-    results = {}
-    for key, svc in SERVICES.items():
-        results[key] = {
-            "name": svc["name"],
-            "url": svc["url"],
-            **await check_service_health(svc["url"])
-        }
-    
+    # Kiểm tra song song cả 6 service để tổng thời gian chỉ bằng service chậm nhất
+    checks = await asyncio.gather(*(check_service_health(svc["url"]) for svc in SERVICES.values()))
+    results = {
+        key: {"name": svc["name"], "url": svc["url"], **check}
+        for (key, svc), check in zip(SERVICES.items(), checks)
+    }
+
     online_count = sum(1 for s in results.values() if s.get("status") == "online")
     total_count = len(results)
     

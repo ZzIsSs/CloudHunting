@@ -9,6 +9,10 @@ from fastapi import Request, Response
 # Client HTTP dùng chung (connection pooling)
 _client = httpx.AsyncClient(timeout=30.0)
 
+# Timeout cho mỗi lần kiểm tra sức khỏe service. Giữ ngắn để /health
+# (Render dùng làm health check) luôn trả lời nhanh kể cả khi service đang khởi động.
+HEALTH_TIMEOUT = 1.5
+
 async def proxy_request(request: Request, target_url: str) -> Response:
     """
     Chuyển tiếp toàn bộ request (method, headers, body, query params)
@@ -84,7 +88,7 @@ async def check_service_health(service_url: str) -> dict:
     """
     try:
         start_time = time.time()
-        response = await _client.get(f"{service_url}/health", timeout=3.0)
+        response = await _client.get(f"{service_url}/health", timeout=HEALTH_TIMEOUT)
         elapsed_ms = round((time.time() - start_time) * 1000)
         return {
             "status": "online",
@@ -95,7 +99,7 @@ async def check_service_health(service_url: str) -> dict:
         # Thử lại với đường dẫn gốc /
         try:
             start_time = time.time()
-            response = await _client.get(f"{service_url}/", timeout=3.0)
+            response = await _client.get(f"{service_url}/", timeout=HEALTH_TIMEOUT)
             elapsed_ms = round((time.time() - start_time) * 1000)
             return {
                 "status": "online",
