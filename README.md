@@ -1,6 +1,9 @@
 # ☁️ Cloud Hunting System (Hệ thống Săn Mây)
 
-Hệ thống tự động thu thập dữ liệu thời tiết, phân tích chỉ số và tích hợp AI để gợi ý địa điểm, thời gian săn mây lý tưởng.
+Hệ thống tự động thu thập dữ liệu thời tiết, phân tích chỉ số và tích hợp AI để gợi ý địa điểm, thời gian săn mây lý tưởng tại Đà Lạt.
+
+👉 **Bản deploy:** https://cloudhuntting.onrender.com
+*(Render gói miễn phí: lần truy cập đầu sau khi site "ngủ" có thể mất vài phút để đủ 6 service.)*
 
 Dự án được xây dựng theo kiến trúc **Monorepo (Modular Monolith)**, gom toàn bộ các thành phần vào một kho lưu trữ thống nhất để dễ dàng phát triển và triển khai.
 
@@ -8,56 +11,56 @@ Dự án được xây dựng theo kiến trúc **Monorepo (Modular Monolith)**,
 
 # 🏗️ Kiến trúc Hệ thống (6 Modules)
 
-Dự án được chia thành **6 phân hệ (module)** cốt lõi cùng chạy trên một hệ thống:
+Dự án được chia thành **6 phân hệ (module)** chạy thành các service FastAPI riêng, phía trước là một **API Gateway** (port 8000) phục vụ cả giao diện web lẫn chuyển tiếp request:
 
-### S1 (Chỉ số)
-Module thu thập dữ liệu API thời tiết (OpenWeatherMap/Tomorrow.io) theo tọa độ.
-
-### S2 (Đặt chỗ)
-Module tích hợp bản đồ, logic chọn slot và đặt chỗ tại các địa điểm săn mây.
-
-### S3 (Auth)
-Module xác thực người dùng (JWT, OAuth), phân quyền (User/Admin/Moderator).
-
-### S4 (Nội dung)
-Module quản lý bài viết, tin tức săn mây và hệ thống ticket CSKH.
-
-### S5 (Thống kê)
-Module phân tích xu hướng, tính toán các chỉ số trung bình/cao/thấp.
-
-### S6 (Gợi ý)
-Module chứa thuật toán AI cá nhân hóa, gợi ý địa điểm dựa trên dữ liệu S1 & S5.
+| Service | Port | Đường dẫn qua Gateway | Chức năng |
+|---|---|---|---|
+| **S1** Chỉ số | 8001 | `/api/s1/*` | Lấy dữ liệu thời tiết từ Open-Meteo, mô hình AI dự báo xác suất có mây cho các điểm săn mây |
+| **S2** Đặt chỗ | 8002 | `/api/v1/*` | Danh sách điểm săn mây, tìm tiện ích xung quanh (cafe, nhà nghỉ, nhà hàng...) trên bản đồ |
+| **S3** Auth | 8003 | `/auth/*` | Đăng ký/đăng nhập, cấp JWT, phân quyền User/Moderator/Admin |
+| **S4** Nội dung | 8004 | `/content/*` | Đánh giá địa điểm (thích, bình luận, kiểm duyệt), bài viết, ticket hỗ trợ |
+| **S5** Thống kê | 8005 | `/api/s5/*` | Lưu lịch sử dự báo, thống kê và xu hướng theo địa điểm |
+| **S6** Gợi ý | 8006 | `/api/s6/*` | Gợi ý lịch trình cá nhân hóa, phương án dự phòng (Plan B), thông báo cơ hội săn mây |
+| **Gateway** | 8000 | `/`, `/health`, `/docs` | Phục vụ frontend React, chuyển tiếp API, dashboard sức khỏe hệ thống |
 
 ---
 
 # 📂 Cấu trúc Thư mục
 
-Mặc dù là mô hình Mono, mã nguồn trong `src/` vẫn được chia phân khu rành mạch theo từng Module để tránh xung đột code khi làm việc nhóm:
+Mã nguồn trong `src/` được chia phân khu rành mạch theo từng Module để tránh xung đột code khi làm việc nhóm:
 
 ```txt
-cloud-hunting-system/
-├── data/                  # [KHÔNG PUSH] Dữ liệu thời tiết thô & đã xử lý
-├── notebooks/             # File Jupyter Notebook (test thuật toán AI, EDA)
-├── src/                   # Source code chính của dự án
-│   ├── s1_metrics/        # [S1] Code gọi API thời tiết, cào dữ liệu
-│   ├── s2_booking/        # [S2] Code xử lý đặt chỗ, tích hợp bản đồ
-│   ├── s3_auth/           # [S3] Code cấp token JWT, phân quyền, middleware
-│   ├── s4_content/        # [S4] Code quản lý bài viết, ticket hỗ trợ
-│   ├── s5_statistics/     # [S5] Code tính toán chỉ số, lưu lịch sử
-│   ├── s6_recommend/      # [S6] Thuật toán AI gợi ý cá nhân hóa
-│   └── shared/            # Code dùng chung cho cả 6 module (utils, config DB...)
-├── .github/               # Template quy chuẩn Pull Request
-├── .gitignore             # File cấu hình chặn push file rác/mật khẩu
-└── requirements.txt       # Danh sách thư viện Python
+CloudHunting/
+├── src/                       # Source code backend (Python/FastAPI)
+│   ├── gateway/               # API Gateway (port 8000)
+│   ├── s1_metrics/            # [S1] Thời tiết + mô hình AI dự báo mây
+│   ├── s2_booking/            # [S2] Điểm săn mây, tiện ích xung quanh
+│   ├── s3_auth/               # [S3] JWT, phân quyền, middleware
+│   ├── s4_content/            # [S4] Đánh giá, bài viết, ticket hỗ trợ
+│   ├── s5_statistics/         # [S5] Thống kê, lưu lịch sử
+│   ├── s6_recommend/          # [S6] Gợi ý lịch trình cá nhân hóa
+│   ├── shared/                # Code dùng chung (config DB, dữ liệu hotspot...)
+│   └── utils/
+├── frontend/
+│   ├── cloud-hunting-app/     # Frontend React + Vite (dist/ được Gateway phục vụ)
+│   └── index.html, js/, css/  # Giao diện HTML/JS bản đầu (không còn được Gateway phục vụ)
+├── Doc/                       # Tài liệu thiết kế
+├── 24120397/                  # Bộ nộp bài (tài liệu, danh sách nhóm, link)
+├── notebooks/                 # Jupyter Notebook (huấn luyện mô hình AI, EDA)
+├── pic/                       # Ảnh các điểm săn mây
+├── start_all.py               # Khởi động toàn bộ hệ thống trên Windows
+├── render.yaml, render_start.sh  # Cấu hình deploy Render
+├── test_integration.py        # Kiểm thử tích hợp theo kịch bản demo
+└── requirements.txt           # Danh sách thư viện Python
 ```
 
 ---
 
 # ⚙️ Yêu cầu Hệ thống (Prerequisites)
 
-- Python 3.10 trở lên  
-- Git  
-- Tài khoản GitHub đã được phân quyền vào repository
+- Python 3.10 trở lên (bản deploy dùng 3.11)
+- Git
+- Node.js 20.19+ hoặc 22.12+ *(chỉ cần khi sửa frontend)*
 
 ---
 
@@ -66,20 +69,83 @@ cloud-hunting-system/
 ## Bước 1: Clone kho mã nguồn về máy
 
 ```bash
-pip install fastapi uvicorn sqlalchemy apscheduler pydantic
+git clone https://github.com/ZzIsSs/CloudHunting.git
+cd CloudHunting
 ```
 
-### 2. Chạy Service
-Bạn có thể khởi động Server bằng lệnh:
+## Bước 2: Tạo môi trường ảo và cài thư viện
+
 ```bash
-python src/s6_recommend/main.py
+python -m venv venv
+.\venv\Scripts\activate          # Windows
+# source venv/bin/activate       # macOS / Linux
+pip install -r requirements.txt
 ```
-*(Server sẽ chạy tại `http://127.0.0.1:8006`)*
 
-### 3. Test API thông qua Swagger UI
-Sau khi chạy Server, truy cập vào giao diện Swagger UI tại:
-👉 `http://127.0.0.1:8006/docs`
+## Bước 3: Tạo file cấu hình `.env`
 
-Bạn có thể test trực tiếp các endpoints `/recommend`, `/plan-b`, `/notifications` ngay trên giao diện này bằng cách nhập JSON request.
+```bash
+copy .env.example .env           # Windows
+# cp .env.example .env           # macOS / Linux
+```
 
+Đổi `JWT_SECRET` thành một chuỗi ngẫu nhiên. Các biến còn lại đã có giá trị mặc định cho môi trường local.
 
+## Bước 4: Khởi động hệ thống
+
+**Windows:** chạy một lệnh, mỗi service mở trong một cửa sổ console riêng:
+
+```bash
+python start_all.py
+```
+
+**macOS / Linux:** chạy từng service (mỗi lệnh một terminal, hoặc thêm `&` để chạy nền):
+
+```bash
+uvicorn src.s3_auth.main:app --port 8003
+uvicorn src.s4_content.main:app --port 8004
+uvicorn src.s5_statistics.main:app --port 8005
+uvicorn src.s1_metrics.main:app --port 8001
+uvicorn src.s2_booking.main:app --port 8002
+uvicorn src.s6_recommend.main:app --port 8006
+uvicorn src.gateway.main:app --port 8000
+```
+
+## Bước 5: Truy cập
+
+- 🌐 Web App: http://127.0.0.1:8000
+- 📖 Swagger UI (toàn bộ API qua Gateway): http://127.0.0.1:8000/docs
+- ❤️ Sức khỏe hệ thống: http://127.0.0.1:8000/health (phải báo `6/6 services đang hoạt động`)
+- Swagger riêng từng service: `http://127.0.0.1:<port>/docs` (port xem bảng ở trên)
+
+---
+
+# 🧪 Kiểm thử
+
+Sau khi hệ thống đã chạy đủ 6/6 service:
+
+```bash
+python test_integration.py                                     # máy local
+python test_integration.py https://cloudhuntting.onrender.com  # bản deploy
+```
+
+Script đi qua Gateway theo đúng kịch bản demo: đăng ký → đăng nhập → dự báo các điểm săn mây → tiện ích xung quanh → đánh giá → lịch trình AI → gửi ticket góp ý. Mỗi lần chạy sẽ tạo thật 1 tài khoản test, 1 đánh giá và 1 ticket.
+
+---
+
+# 🎨 Phát triển Frontend
+
+```bash
+cd frontend/cloud-hunting-app
+npm install
+npm run dev      # http://localhost:5173, tự chuyển /api, /auth, /content sang Gateway port 8000
+npm run build    # build ra dist/ — commit dist/ để Gateway và Render dùng bản mới
+```
+
+Frontend gọi API bằng đường dẫn tương đối (`/api/...`, `/auth/...`, `/content/...`), **không** ghi cứng `http://127.0.0.1:8000`, để chạy được cả ở máy local lẫn bản deploy.
+
+---
+
+# ☁️ Deploy (Render)
+
+Render đọc `render.yaml`: cài thư viện bằng `pip install -r requirements.txt`, rồi chạy `render_start.sh` để khởi động 6 service nội bộ và Gateway trên cổng `$PORT`. Render dùng `/health` làm health check.
