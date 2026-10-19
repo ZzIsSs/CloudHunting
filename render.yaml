@@ -5,7 +5,7 @@ services:
   - type: web
     name: cloudhunting
     runtime: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: bash render_build.sh
     startCommand: bash render_start.sh
     healthCheckPath: /health
     envVars:
@@ -15,3 +15,5 @@ services:
         value: "false"
       - key: PYTHON_VERSION
         value: "3.11.9"
+      - key: NODE_VERSION
+        value: "22.13.0"
