@@ -251,7 +251,7 @@ export default function ReviewCard() {
           vehicle_type: "xe máy",
           selected_location: displayName
       };
-      const res = await fetch('http://127.0.0.1:8000/api/s6/recommend', {
+      const res = await fetch('/api/s6/recommend', {
         method: 'POST',
         headers,
         body: JSON.stringify(payload)

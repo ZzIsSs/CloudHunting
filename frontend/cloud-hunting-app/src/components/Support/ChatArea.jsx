@@ -13,7 +13,7 @@ export default function ChatArea({ activeTicketId }) {
       try {
         const token = localStorage.getItem('accessToken');
         const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-        const res = await fetch(`http://127.0.0.1:8000/content/tickets/${activeTicketId}`, { headers });
+        const res = await fetch(`/content/tickets/${activeTicketId}`, { headers });
         if (res.ok) {
           const data = await res.json();
           setTicketData(data);
@@ -35,7 +35,7 @@ export default function ChatArea({ activeTicketId }) {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       };
-      const res = await fetch(`http://127.0.0.1:8000/content/tickets/${activeTicketId}/messages`, {
+      const res = await fetch(`/content/tickets/${activeTicketId}/messages`, {
         method: 'POST',
         headers,
         body: JSON.stringify({ message: inputText })
