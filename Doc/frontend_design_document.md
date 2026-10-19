@@ -256,7 +256,7 @@ flowchart TD
 | Thuộc tính | Chi tiết |
 |---|---|
 | **Giao diện** | 2 panel. Panel trái: danh sách địa điểm gợi ý + timeline lịch trình (giờ, địa điểm, hành động, ghi chú). Panel phải: thông báo cảnh báo thời tiết với chỉ báo màu sắc. |
-| **Components** | `ScheduleTimeline`, `WeatherAlert`, `TopRightNav` |
+| **Components** | `ScheduleTimeline`, `TopRightNav` |
 | **API gọi** | `POST /api/s6/recommend`, `GET /api/s6/notifications` |
 
 ---
@@ -435,13 +435,6 @@ flowchart TD
 | **Mục đích** | Component timeline tự động fetch và hiển thị lịch trình |
 | **Props** | Không có |
 | **Tính năng** | Tự gọi `POST /api/s6/recommend`. Layout timeline dọc. Sử dụng `getSmartStartTime()` |
-
-#### WeatherAlert
-| Thuộc tính | Chi tiết |
-|---|---|
-| **Mục đích** | Banner cảnh báo thời tiết |
-| **Props** | `message` (string) |
-| **Tính năng** | Render có điều kiện. Icon cảnh báo ⚠️ đầu dòng |
 
 ---
 
