@@ -17,6 +17,14 @@ else
     echo "  ⚠️ Running on Free Tier (No /data persistent volume detected). Using local SQLite."
 fi
 
+# [Render Free Tier: 512 MB RAM, 0.1 CPU] Giam RAM/CPU cho 7 tien trinh Python
+# numpy/sklearn mac dinh tao thread pool theo so CPU cua may chu -> gioi han 1 thread
+export OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+# glibc mac dinh tao nhieu vung nho (arena) cho moi thread -> gioi han 2
+export MALLOC_ARENA_MAX=2
+# S6 quet co hoi san may moi 15 phut thay vi 1 phut (moi lan quet goi S1 cho tat ca dia diem)
+export S6_SCAN_INTERVAL_MINUTES=${S6_SCAN_INTERVAL_MINUTES:-15}
+
 # Khoi dong cac service noi bo (chay ngam)
 uvicorn src.s3_auth.main:app --host 0.0.0.0 --port 8003 &
 echo "  ✓ S3 Auth (port 8003)"

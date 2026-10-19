@@ -1,11 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import contextlib
+import os
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from .routes import router as s6_router
 from .database import init_db, SessionLocal
 from .services import scan_and_notify_opportunities
+
+# Chu kỳ quét cơ hội săn mây (phút). Mỗi lần quét gọi S1 cho tất cả địa điểm,
+# nên trên Render (0.1 CPU) đặt lớn hơn qua biến môi trường (xem render_start.sh).
+SCAN_INTERVAL_MINUTES = int(os.getenv("S6_SCAN_INTERVAL_MINUTES", "1"))
 
 def scheduled_scan():
     db = SessionLocal()
@@ -22,9 +27,9 @@ async def lifespan(app: FastAPI):
     
     # Bật bộ quét ngầm
     scheduler = BackgroundScheduler()
-    scheduler.add_job(scheduled_scan, "interval", minutes=1)
+    scheduler.add_job(scheduled_scan, "interval", minutes=SCAN_INTERVAL_MINUTES)
     scheduler.start()
-    print("⏰ [Service 6] Bộ quét cảnh báo tự động đã bật (1 phút/lần).")
+    print(f"⏰ [Service 6] Bộ quét cảnh báo tự động đã bật ({SCAN_INTERVAL_MINUTES} phút/lần).")
     
     yield
     print("🛑 [Service 6] Đang tắt Server...")
