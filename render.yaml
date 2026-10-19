@@ -7,6 +7,7 @@ services:
     runtime: python
     buildCommand: bash render_build.sh
     startCommand: bash render_start.sh
+    healthCheckPath: /health
     envVars:
       - key: JWT_SECRET
         generateValue: true
@@ -15,4 +16,4 @@ services:
       - key: PYTHON_VERSION
         value: "3.11.9"
       - key: NODE_VERSION
-        value: "20.12.2"
+        value: "22.13.0"
